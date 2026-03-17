@@ -1,8 +1,19 @@
-# Stream Watch
+# StreamOps
 
-`stream-watch` is a sanitized reference implementation of a live monitor service used alongside a separate control plane. It serves a single watch URL, selects a playback strategy based on client type, and aggregates monitor-side viewers with upstream RTMP viewer stats.
+StreamOps is a sanitized public reference build of a live monitoring frontend and playback gateway used in RTMP distribution workflows.
 
-## What It Includes
+It focuses on one thing: giving operators a single watch entry that can adapt playback behavior across desktop and mobile clients while still integrating with an external control plane for stream state and viewer statistics.
+
+## Highlights
+
+- Single watch URL for desktop and mobile monitoring
+- HTTP-FLV oriented desktop playback path
+- HLS fallback path for mobile clients
+- Edge-aware playback routing
+- Viewer aggregation across monitor-side web viewers and upstream RTMP consumers
+- Lightweight deployment with Python + Nginx
+
+## Repository Layout
 
 - `server.py`: Python HTTP service for watch pages, playback redirects, and viewer aggregation
 - `assets/`: bundled `flv.js` and `hls.js`
@@ -11,7 +22,7 @@
 - `docker-compose.yml`: sample Nginx container wiring
 - `config.example.yml`: sanitized configuration template
 
-## What Was Removed
+## Sanitization Notes
 
 - Real domains, IP addresses, and upstream hostnames
 - Business identifiers, contact details, and compliance labels
@@ -54,7 +65,7 @@ You can also override paths with environment variables:
 - `STREAM_WATCH_ASSETS_DIR`
 - `STREAM_WATCH_JOBS`
 
-## Run
+## Local Run
 
 Install the only Python dependency:
 
@@ -79,6 +90,19 @@ Use a front proxy to expose:
 - `/hls/<app>/<stream_name>.m3u8`
 
 The bundled `nginx.conf` is only a sample. Replace the placeholder edge hostnames with your own upstreams before deployment.
+
+## Release Notes
+
+This public repository intentionally does not include:
+
+- the original private control plane project
+- private edge topology
+- operational credentials
+- deployment-specific branding
+
+## License
+
+MIT
 
 ## Notes
 
