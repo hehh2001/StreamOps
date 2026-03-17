@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stream Watch</title>
+<style>
+body{margin:0;background:#0b1020;color:#eef2ff;font-family:system-ui}
+.wrap{max-width:960px;margin:0 auto;padding:24px}
+.card{background:#121936;border-radius:16px;padding:20px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+h1{margin:0 0 12px;font-size:24px}.muted{color:#a6b0cf;font-size:14px;margin-bottom:16px}
+video{width:100%;background:#000;border-radius:12px;max-height:72vh}.mono{font-family:monospace;word-break:break-all}
+.err{margin-top:12px;color:#ffb4b4;white-space:pre-wrap}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="card">
+    <h1>直播监看</h1>
+    <div class="muted" id="stream-name"></div>
+    <video id="video" controls playsinline webkit-playsinline autoplay muted></video>
+    <div class="muted mono" id="play-url"></div>
+    <div class="err" id="error"></div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script>
+(function(){
+  const video=document.getElementById('video')
+  const errorBox=document.getElementById('error')
+  const streamNameBox=document.getElementById('stream-name')
+  const playUrlBox=document.getElementById('play-url')
+  const segs=location.pathname.replace(/\/+$/,'').split('/').filter(Boolean)
+  const stream=decodeURIComponent(segs.length>1 ? segs[1] : '')
+  if(!stream){
+    errorBox.textContent='地址格式应为 /watch/<stream_name>'
+    return
+  }
+  const src=`/hls/live/${encodeURIComponent(stream)}.m3u8`
+  streamNameBox.textContent=`流名: ${stream}`
+  playUrlBox.textContent=`HLS: ${location.origin}${src}`
+  if(video.canPlayType('application/vnd.apple.mpegurl')){
+    video.src=src
+    video.play().catch(()=>{})
+    return
+  }
+  if(window.Hls && Hls.isSupported()){
+    const hls=new Hls({enableWorker:true,lowLatencyMode:false})
+    hls.loadSource(src)
+    hls.attachMedia(video)
+    hls.on(Hls.Events.ERROR, function(_, data){
+      if(data && data.fatal){
+        errorBox.textContent='播放器错误: '+data.type+' / '+data.details
+      }
+    })
+    video.play().catch(()=>{})
+    return
+  }
+  errorBox.textContent='当前浏览器不支持 HLS 播放'
+})()
+</script>
+</body>
+</html>

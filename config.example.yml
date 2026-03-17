@@ -1,0 +1,21 @@
+playback:
+  scheme: https
+  host: monitor.example.com
+  port: 1443
+  watch_path_prefix: watch
+  flv_path_prefix: flv
+  hls_path_prefix: hls
+  flv_app: live
+  hls_app: live
+  hls_edge_port: 18080
+  hls_edges:
+    - http://edge-a.internal:18080
+    - http://edge-b.internal:18080
+  hls_edge_host: ""
+  control_api_base: http://127.0.0.1:18080
+
+srs:
+  origin_app: live
+  edges:
+    - http://edge-a.internal:1985
+    - http://edge-b.internal:1985
